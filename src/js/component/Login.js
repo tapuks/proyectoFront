@@ -5,26 +5,43 @@ import "../../styles/index.scss";
 export const Login = () => {
 	const [userName, setUserName] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState(false);
+
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
 	var urlencoded = new URLSearchParams();
 	urlencoded.append("username", userName);
 	urlencoded.append("password", password);
 
+	var requestOptions = {
+		method: "POST",
+		headers: myHeaders,
+		body: urlencoded,
+		redirect: "follow"
+	};
+
 	const login = () => {
-		fetch("https://girridesk.ddns.net/api/v1/token/", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: urlencoded
-		})
+		fetch("https://girridesk.ddns.net/api/v1/token/", requestOptions)
 			.then(response => response.json())
+
 			.then(responseJson => {
 				console.log(responseJson);
-				// actions.setToken(responseJson.token);
-				// //Cuando llegue aqui te redirige a esa ruta
-				// history.push("/profile");
-			});
+
+				if (responseJson.access_token) {
+					console.log(responseJson.access_token);
+					alert("Login ok");
+					setError(false);
+				} else if (responseJson.error) {
+					console.log("error");
+					setError(true);
+				}
+			})
+
+			.catch(error => console.log("error", error));
 	};
+	useEffect(() => {}, [error]);
+
 	return (
 		<div className="login">
 			<div className="jumbotron ">
@@ -43,6 +60,7 @@ export const Login = () => {
 							onChange={e => setUserName(e.target.value)}
 						/>
 					</div>
+
 					<div className="form-group">
 						<label>Password</label>
 						<input
@@ -52,12 +70,15 @@ export const Login = () => {
 							onChange={e => setPassword(e.target.value)}
 						/>
 					</div>
+					{error == true ? <p className="text-danger">Nombre de usuario o contraseña incorrecto</p> : ""}
 
 					<button
 						type="submit"
 						className="btn btn-primary"
 						onClick={e => {
-							e.preventDefault;
+							e.preventDefault();
+							console.log(userName);
+							console.log(password);
 							login();
 						}}>
 						Entrar

@@ -1,8 +1,15 @@
+* {
+    box-sizing: border-box;
+}
 .navbar__name {
-    margin-left: 200px;
+    
     font-size: 2rem;
     color: rgba(0, 0, 255, 0.568) !important;
 }
 .login__name {
     margin-top: -40px !important;
+}
+.navbar__img {
+    max-width: 100%;
+    width: 6rem;
 }
